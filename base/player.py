@@ -23,12 +23,10 @@ class Player:
         if amount > self.score:
             print(f"{self.name} does not have enough money to bet {amount}.")
             
-            return 0
+            return -1
         else:
             self.score -= amount
             self.current_bet += amount
             print(f"{self.name} bets {amount}.")
             
             return amount
-    
-    
