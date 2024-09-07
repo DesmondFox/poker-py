@@ -1,9 +1,6 @@
-from base.deck import Deck
+from base.actions import Actions
 from base.game import Game
 from base.player import Player
-
-deck = Deck()
-deck.shuffle()
 
 user = Player("User")
 user.set_score(1000)
@@ -17,4 +14,15 @@ player2.set_score(1000)
 game = Game()
 game.add_players([user, player1, player2])
 
-game.start()
+
+def callback(player, bid):
+    print(f"{player.name}'s turn.")
+    
+    return Actions.CHECK, None
+
+
+game.set_callback(callback)
+
+
+if __name__ == "__main__":
+    game.start()
