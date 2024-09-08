@@ -8,6 +8,7 @@ class Game:
         self.deck = Deck()
         self.deck.shuffle()
         self.current_bank = 0
+        self.current_bid = 0
         self.players = []
         self.callback = None
         
@@ -29,29 +30,39 @@ class Game:
             p.receive_cards(self.deck.deal())
             print(f"Initial cards: {p}")
         self.betting_round()
+        self.reset_bet()
             
     def set_callback(self, callback: Callable[[Player, int], Union[Actions, int | None]]) -> None:
         '''Set the callback for the betting round'''
         self.callback = callback
+        
+    def reset_bet(self) -> None:
+        '''Reset the current bet'''
+        self.current_bid = 0
 
     def betting_round(self) -> None:
         '''Start the betting round'''
-        for player in self.players:
-            callback_result = self.callback(player, self.current_bank)
+        players_copied = self.players.copy()
+        for player in players_copied:
+            callback_result = self.callback(player, self.current_bid)
             action = callback_result[0]
+            
+            if action == Actions.CHECK:
+                print(f"{player.name} checks.")
             
             if action == Actions.FOLD:
                 print(f"{player.name} folds. {player.name} has left the game.")
                 self.players.remove(player)
                 
             elif action == Actions.CALL:
-                call_amount = self.current_bank - player.current_bet
-                player.bet(call_amount)
-                print(f"{player.name} calls. {player.name} adds {call_amount} to the bank.")
+                player.bet(self.current_bid)
+                self.current_bank += self.current_bid
+                print(f"{player.name} calls. {player.name} adds {self.current_bid} to the bank.")
                 
             elif action == Actions.RAISE:
                 raise_amount = callback_result[1]
-                player.bet(raise_amount)
+                self.current_bid = player.bet(raise_amount)
+                self.current_bank += self.current_bid
                 print(f"{player.name} raises. {player.name} raises by {raise_amount}.")
                 
             else:

@@ -19,15 +19,23 @@ game.set_blinds(MINIMAL_BLIND, MAXIMAL_BLIND)
 game.add_players([user, player1, player2])
 
 
-def callback(player, bid: int):
+def callback(player: Player, bid: int):
     print(f"---------------------------------")
     print(f"✅ {player.name}'s turn.")
     print(f"💵 {player.name}'s score: {player.score}")
     print(f"💰 Current bank: {game.current_bank}")
+    if bid > 0:
+        print(f"❗ Bid: {bid}")
     print(f"🃏 {player.name}'s hand: {player.hand}")
     
+    can_check = bid == 0
+    can_call = bid > 0 and player.score >= bid
+    
     while True:
-        action = input("Enter an action (check[c], call[l], raise[e], fold[f]): ").lower()
+        action = input("Enter an action ({check}{call}raise[e], fold[f]): ".format(
+            check="check[c], " if can_check else "",
+            call="call[l], " if can_call else ""
+            )).lower()
         
         if action == "c":
             return Actions.CHECK, None
