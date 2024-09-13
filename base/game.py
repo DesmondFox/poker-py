@@ -1,6 +1,7 @@
 from typing import Callable, Union
 from base.actions import Actions
 from base.deck import Deck
+from base.hand_evaluator import HandEvaluator
 from base.player import Player
 
 class Game:
@@ -14,6 +15,8 @@ class Game:
         
         self.minimal_blind = 0
         self.maximal_blind = 0
+        
+        self.hand_evaluator = HandEvaluator()
         
     def set_blinds(self, minimal_blind: int, maximal_blind: int) -> None:
         '''Set the minimal and maximal blinds'''
